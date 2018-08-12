@@ -25,7 +25,7 @@ public class StreamSubscriber {
                             if (event instanceof HelloEvent.GreetingMessageChanged) {
                                 HelloEvent.GreetingMessageChanged messageChanged = (HelloEvent.GreetingMessageChanged) event;
                                 // Update the message
-                                return repository.updateMessage(messageChanged.getName(), messageChanged.getMessage());
+                                return repository.updateMessage(messageChanged.getName(), messageChanged.message);
 
                             } else {
                                 // Ignore all other events

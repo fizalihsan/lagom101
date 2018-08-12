@@ -35,15 +35,18 @@ public class StreamRepository {
     }
 
     public CompletionStage<Done> updateMessage(String name, String message) {
-        return session().thenCompose(session ->
-                session.executeWrite("INSERT INTO greeting_message (name, message) VALUES (?, ?)",
-                        name, message)
-        );
+        return session()
+                .thenCompose(session ->
+                        session.executeWrite(
+                                "INSERT INTO greeting_message (name, message) VALUES (?, ?)",
+                                name, message)
+                );
     }
 
     public CompletionStage<Optional<String>> getMessage(String name) {
-        return session().thenCompose(session ->
-                session.selectOne("SELECT message FROM greeting_message WHERE name = ?", name)
-        ).thenApply(maybeRow -> maybeRow.map(row -> row.getString("message")));
+        return session()
+                .thenCompose(session ->
+                        session.selectOne("SELECT message FROM greeting_message WHERE name = ?", name)
+                ).thenApply(maybeRow -> maybeRow.map(row -> row.getString("message")));
     }
 }

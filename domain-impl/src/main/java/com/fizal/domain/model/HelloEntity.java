@@ -1,11 +1,10 @@
-package com.fizal.domain.impl;
+package com.fizal.domain.model;
+
+import akka.Done;
+import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
-import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
-
-import akka.Done;
 
 /**
  * This is an event sourced entity. It has a state, {@link HelloState}, which
@@ -28,12 +27,12 @@ import akka.Done;
  */
 public class HelloEntity extends PersistentEntity<HelloCommand, HelloEvent, HelloState> {
 
-  /**
-   * An entity can define different behaviours for different states, but it will
-   * always start with an initial behaviour. This entity only has one behaviour.
-   */
-  @Override
-  public Behavior initialBehavior(Optional<HelloState> snapshotState) {
+    /**
+     * An entity can define different behaviours for different states, but it will
+     * always start with an initial behaviour. This entity only has one behaviour.
+     */
+    @Override
+    public Behavior initialBehavior(Optional<HelloState> snapshotState) {
 
     /*
      * Behaviour is defined using a behaviour builder. The behaviour builder
@@ -44,40 +43,40 @@ public class HelloEntity extends PersistentEntity<HelloCommand, HelloEvent, Hell
      *
      * Otherwise, the default state is to use the Hello greeting.
      */
-    BehaviorBuilder b = newBehaviorBuilder(
-        snapshotState.orElse(new HelloState("Hello", LocalDateTime.now().toString())));
+        BehaviorBuilder b = newBehaviorBuilder(
+                snapshotState.orElse(new HelloState("Hello", LocalDateTime.now().toString())));
 
     /*
-     * Command handler for the UseGreetingMessage command.
+     * Command handler for the CreateProfileCommand command.
      */
-    b.setCommandHandler(HelloCommand.UseGreetingMessage.class, (cmd, ctx) ->
-    // In response to this command, we want to first persist it as a
-    // GreetingMessageChanged event
-    ctx.thenPersist(new HelloEvent.GreetingMessageChanged(entityId(), cmd.message),
-        // Then once the event is successfully persisted, we respond with done.
-        evt -> ctx.reply(Done.getInstance())));
+        b.setCommandHandler(HelloCommand.UseGreetingMessage.class, (cmd, ctx) ->
+                // In response to this command, we want to first persist it as a
+                // GreetingMessageChanged event
+                ctx.thenPersist(new HelloEvent.GreetingMessageChanged(entityId(), cmd.message),
+                        // Then once the event is successfully persisted, we respond with done.
+                        evt -> ctx.reply(Done.getInstance())));
 
     /*
      * Event handler for the GreetingMessageChanged event.
      */
-    b.setEventHandler(HelloEvent.GreetingMessageChanged.class,
-        // We simply update the current state to use the greeting message from
-        // the event.
-        evt -> new HelloState(evt.message, LocalDateTime.now().toString()));
+        b.setEventHandler(HelloEvent.GreetingMessageChanged.class,
+                // We simply update the current state to use the greeting message from
+                // the event.
+                evt -> new HelloState(evt.message, LocalDateTime.now().toString()));
 
     /*
      * Command handler for the Hello command.
      */
-    b.setReadOnlyCommandHandler(HelloCommand.Hello.class,
-        // Get the greeting from the current state, and prepend it to the name
-        // that we're sending
-        // a greeting to, and reply with that message.
-        (cmd, ctx) -> ctx.reply(state().message + ", " + cmd.name + "!"));
+        b.setReadOnlyCommandHandler(HelloCommand.Hello.class,
+                // Get the greeting from the current state, and prepend it to the name
+                // that we're sending
+                // a greeting to, and reply with that message.
+                (cmd, ctx) -> ctx.reply(state().message + ", " + cmd.name + "!"));
 
     /*
      * We've defined all our behaviour, so build and return it.
      */
-    return b.build();
-  }
+        return b.build();
+    }
 
 }

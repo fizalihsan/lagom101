@@ -11,45 +11,51 @@ import com.lightbend.lagom.javadsl.api.broker.kafka.KafkaProperties;
 import static com.lightbend.lagom.javadsl.api.Service.*;
 
 /**
- * The Hello service interface.
+ * The Profile service interface.
  * <p>
  * This describes everything that Lagom needs to know about how to serve and
- * consume the Hello.
+ * consume the Profile.
  */
-public interface HelloService extends Service {
+public interface ProfileService extends Service {
 
     /**
-     * Example: curl http://localhost:9000/api/hello/Alice
+     * Example: curl http://localhost:9000/api/getProfile/123
      */
-    ServiceCall<NotUsed, String> hello(String id);
+    ServiceCall<NotUsed, String> getProfile(String id);
 
 
     /**
-     * Example: curl -H "Content-Type: application/json" -X POST -d '{"message":
-     * "Hi"}' http://localhost:9000/api/hello/Alice
+     * Example: curl -H "Content-Type: application/json" -X POST -d '{"id":
+     * "123-234-345"}' http://localhost:9000/api/createProfile
      */
-    ServiceCall<GreetingMessage, Done> useGreeting(String id);
+    ServiceCall<Profile, Done> createProfile();
 
+    /**
+     * Example: curl -H "Content-Type: application/json" -X POST -d '{"id":
+     * "123-234-345", "location": "NYC"}' http://localhost:9000/api/updateProfile
+     */
+    ServiceCall<Profile, Done> updateProfile();
 
     /**
      * This gets published to Kafka.
      */
-    Topic<HelloEvent> helloEvents();
+    Topic<ProfileEvent> profileEvents();
 
     @Override
     default Descriptor descriptor() {
         // @formatter:off
-        return named("hello").withCalls(
-                pathCall("/api/hello/:id", this::hello),
-                pathCall("/api/hello/:id", this::useGreeting)
+        return named("profile").withCalls(
+                pathCall("/api/getProfile/:id", this::getProfile),
+                pathCall("/api/createProfile", this::createProfile),
+                pathCall("/api/updateProfile", this::updateProfile)
         ).withTopics(
-                topic("hello-events", this::helloEvents)
+                topic("profile-events", this::profileEvents)
                         // Kafka partitions messages, messages within the same partition will
                         // be delivered in order, to ensure that all messages for the same user
                         // go to the same partition (and hence are delivered in order with respect
                         // to that user), we configure a partition key strategy that extracts the
                         // name as the partition key.
-                        .withProperty(KafkaProperties.partitionKeyStrategy(), HelloEvent::getName)
+                        .withProperty(KafkaProperties.partitionKeyStrategy(), ProfileEvent::getId)
         ).withAutoAcl(true);
         // @formatter:on
     }

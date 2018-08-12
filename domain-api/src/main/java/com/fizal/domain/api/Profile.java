@@ -7,12 +7,15 @@ import lombok.Value;
 
 @Value
 @JsonDeserialize
-public final class GreetingMessage {
+public final class Profile {
 
-    public final String message;
+    public final String id;
+    public String name = "";
+    public String location = "";
 
     @JsonCreator
-    public GreetingMessage(String message) {
-        this.message = Preconditions.checkNotNull(message, "message");
+    public Profile(String id) {
+        this.id = Preconditions.checkNotNull(id, "id");
     }
+
 }

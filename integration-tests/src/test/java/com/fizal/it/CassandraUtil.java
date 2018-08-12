@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 /**
  * Simple utility program to read Cassandra DB data
- *
+ * <p>
  * Created by Fizal on 8/12/18.
  */
 public class CassandraUtil {

@@ -7,3 +7,5 @@
 # Technology Stack
 
 * Lagom Framework
+    * Backend store: Cassandra
+    * Message Broker: Kafka

@@ -9,3 +9,7 @@
 * Lagom Framework
     * Backend store: Cassandra
     * Message Broker: Kafka
+    
+# Event Processing Flow 
+
+![Event Processing Flow](/images/LagomEventProcessing.png)
